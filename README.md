@@ -1,5 +1,5 @@
 # NeckHeadLock
-Creates a setup for Head and Neck Lock. 
+Maya - Python - Creates a setup for Head and Neck Lock. 
 Select: Chest, NeckBase, NeckMid, HeadBase
 1) Will create Lock Space Group for Neck and Head
 2) Create necessary constraints between Chest, Neck and Head
