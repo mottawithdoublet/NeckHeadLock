@@ -1,0 +1,51 @@
+#Neck Lock SYSTEM
+import maya.cmds as pm
+import misc_commands as misc
+sel = pm.ls(sl=True)
+
+chest1=sel[0]
+neckBase1=sel[1]
+neckMid1= sel[2]
+headBase1 = sel[3]
+
+name = neckBase1
+name_List = name.split('_')
+
+name2 = headBase1
+name_List2 = name2.split('_')
+
+#cmds.parent(neckMid1+'_Grp', neckBase1+'_Grp')
+cmds.select(neckBase1+'_Grp')
+neckLock= misc.MakeSpaceFor(neckBase1+'_Grp', "Lock")
+neckMaster= misc.MakeSpaceFor(neckLock, "Grp")
+
+cmds.pointConstraint(chest1,neckMaster, mo=True)
+oc_Mid = cmds.orientConstraint(neckMaster, chest1,neckLock, mo=True)
+oc_NeckW= cmds.orientConstraint(neckLock,q=True,  tl=True)
+#cmds.setAttr(oc_Mid+".interpType", 2)
+
+cmds.select(headBase1+'_Grp')
+headLock=  misc.MakeSpaceFor(headBase1+'_Grp', "Lock")
+headMaster= misc.MakeSpaceFor(headLock, "Grp")
+
+cmds.parent(headMaster,"Direction_Ctrl")
+
+cmds.pointConstraint(neckMid1,headMaster, mo=True)
+oc_Head = cmds.parentConstraint(neckMid1,headMaster, headLock, mo=True)
+#cmds.setAttr(oc_Head+".interpType", 2)
+
+cmds.parent(neckMaster,"Direction_Ctrl")
+
+cmds.select("Head_Ctrl")
+cmds.addAttr(sn='hls', ln='HeadLockShift', nn='Head Lock Shift', min=0.000, max=1.000, k=True)
+cmds.addAttr(sn='nls', ln='NeckLockShift', nn='Neck Lock Shift', min=0.000, max=1.000, k=True)
+
+ocHead_rev = pm.shadingNode('reverse', asUtility=True, n= headBase1+ '_reverse')
+cmds.connectAttr(headBase1+'.hls',ocHead_rev+'.inputX', f=True)
+cmds.connectAttr(ocHead_rev+'.outputX',headLock+'_parentConstraint1.Neck_Mid_CtrlW0', f=True)
+cmds.connectAttr(headBase1+'.hls',headLock+'_parentConstraint1.Head_Ctrl_Grp_Lock_GrpW1', f=True)
+
+ocNeck_rev = pm.shadingNode('reverse', asUtility=True, n= neckBase1+ '_reverse')
+cmds.connectAttr(headBase1+'.nls',ocNeck_rev+'.inputX', f=True)
+cmds.connectAttr(ocNeck_rev+'.outputX',neckLock+'_orientConstraint1.AUX_Neck_Base_CtrlW1', f=True)
+cmds.connectAttr(headBase1+'.nls',neckLock+'_orientConstraint1.Neck_Base_Ctrl_Grp_Lock_GrpW0', f=True)
