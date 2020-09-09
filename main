@@ -8,34 +8,42 @@ neckBase1=sel[1]
 neckMid1= sel[2]
 headBase1 = sel[3]
 
+#Obtains nomenclature for naming conventios.
 name = neckBase1
 name_List = name.split('_')
 
 name2 = headBase1
 name_List2 = name2.split('_')
 
+#Creates space groups for controls (necessary for clean space changes) for NECK
 #cmds.parent(neckMid1+'_Grp', neckBase1+'_Grp')
 cmds.select(neckBase1+'_Grp')
 neckLock= misc.MakeSpaceFor(neckBase1+'_Grp', "Lock")
 neckMaster= misc.MakeSpaceFor(neckLock, "Grp")
 
+#Creates constrains and orients between chest and neck controls for Neck space change
 cmds.pointConstraint(chest1,neckMaster, mo=True)
 oc_Mid = cmds.orientConstraint(neckMaster, chest1,neckLock, mo=True)
 oc_NeckW= cmds.orientConstraint(neckLock,q=True,  tl=True)
 #cmds.setAttr(oc_Mid+".interpType", 2)
 
+#Creates space groups for controls (necessary for clean space changes) for HEAD
 cmds.select(headBase1+'_Grp')
 headLock=  misc.MakeSpaceFor(headBase1+'_Grp', "Lock")
 headMaster= misc.MakeSpaceFor(headLock, "Grp")
 
+#Properly locates head in heriarchy
 cmds.parent(headMaster,"Direction_Ctrl")
 
+#Creates constrains and orients between chest and neck controls for Head space change
 cmds.pointConstraint(neckMid1,headMaster, mo=True)
 oc_Head = cmds.parentConstraint(neckMid1,headMaster, headLock, mo=True)
 #cmds.setAttr(oc_Head+".interpType", 2)
 
+#Properly locates neck in in heriarchy
 cmds.parent(neckMaster,"Direction_Ctrl")
 
+#Creates attributes for Lock, Neck Shift ON/OFF (connects values through nodes from user to constrains)
 cmds.select("Head_Ctrl")
 cmds.addAttr(sn='hls', ln='HeadLockShift', nn='Head Lock Shift', min=0.000, max=1.000, k=True)
 cmds.addAttr(sn='nls', ln='NeckLockShift', nn='Neck Lock Shift', min=0.000, max=1.000, k=True)
